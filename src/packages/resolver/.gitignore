@@ -1,0 +1,5 @@
+node_modules
+.history
+.cache
+dist
+package-lock.json
