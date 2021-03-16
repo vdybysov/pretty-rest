@@ -1,7 +1,7 @@
+import { Endpoint } from "@pretty-rest/common"
 import { promises as fs } from "fs"
 import * as Path from "path"
 import { CodeBlockWriter, Project, ts } from "ts-morph"
-import { Endpoint, Method } from "@pretty-rest/common"
 
 export async function generateFetch(root: { endpoint: Endpoint, errors: Error[] }) {
 
@@ -31,19 +31,21 @@ export async function generateFetch(root: { endpoint: Endpoint, errors: Error[] 
         file.emit()
     }
 
-    function writeHandlerType(writer: CodeBlockWriter, { name, inputType, outputType, method }) {
-        writer.writeLine(`  ${name}: (input: ${inputType.getText()}, init?: RequestInit) => Promise<${outputType.getText()}>;`)
+    function writeHandlerType(writer: CodeBlockWriter, { name, inputType, outputType }) {
+        const inputArg = inputType ? `input: ${inputType.getText()}, ` : ``
+        writer.writeLine(`  ${name}: (${inputArg}initProvider?: () => RequestInit | Promise<RequestInit>) => Promise<${outputType.getText()}>;`)
     }
 
-    function writeHandler(writer: CodeBlockWriter, { name, inputType, outputType, method }, path = '') {
+    function writeHandler(writer: CodeBlockWriter, { name, inputType, outputType, method }, path = '', isRoot: boolean) {
         const isPost = method.toLowerCase() === 'post'
-        writer.writeLine(`  ${name}: async (input: ${inputType.getText()}, init: RequestInit = {}) => {`)
-        writer.writeLine(`      const url = buildUrl(${path ? `path + '/${path}'` : 'path'}, ${isPost ? '{}' : 'input'}),`)
-        writer.writeLine(`      const res = await fetch(url, {`)
-        writer.writeLine(`          ...mergeInits(parentInit, defaultInit, init),`)
-        writer.writeLine(`          method: '${method.toUpperCase()}',`)
-        if (isPost) {
-            writer.writeLine(`          body: JSON.stringify(input)`)
+        const inputArg = inputType ? `input: ${inputType.getText()}, ` : ``
+        writer.writeLine(`  ${name}: async (${inputArg}initProvider: () => RequestInit | Promise<RequestInit>) => {`)
+        writer.writeLine(`      const res = await fetch(`)
+        writer.writeLine(`          buildUrl(${path ? `path + '/${path}'` : 'path'}, ${!inputType ? '{}' : 'input'}, ${isPost}), {`)
+        writer.writeLine(`              ...(await mergeInitProviders(${isRoot ? '() => rootInit, ' : ''}defaultInitProvider, initProvider)()),`)
+        writer.writeLine(`              method: '${method.toUpperCase()}',`)
+        if (inputType && isPost) {
+            writer.writeLine(`              body: JSON.stringify(input)`)
         }
         writer.writeLine(`      })`)
         writer.writeLine(`      if(res.ok) {`)
@@ -63,13 +65,21 @@ export async function generateFetch(root: { endpoint: Endpoint, errors: Error[] 
             path.split('/').map(() => '..').join('/')
         ].filter(part => !!part).join('/')
         file.addStatements(writer => {
-            writer.writeLine(`import { buildUrl, mergeInits } from "${clientRootPath}/helpers"`)
-            endpoint.children.forEach((ep) => {
-                if (!ep.canSimplify) {
-                    generateEndpoint(ep, path)
-                    writer.writeLine(`import ${ep.safeName}, { ${ep.safeName} as ${ep.safeName}Type } from "./${ep.name}"`)
+            writer.writeLine(`import { buildUrl, mergeInitProviders } from "${clientRootPath}/helpers"`)
+            endpoint.children.forEach((child) => {
+                if (!child.canSimplify) {
+                    generateEndpoint(child, path)
+                    writer.writeLine(`import ${child.safeName}, { ${child.safeName} as ${child.safeName}Type } from "./${child.name}"`)
                 }
             })
+            if (endpoint.isRoot) {
+                writer.blankLine()
+                writer.writeLine(`const rootInit = {`)
+                writer.writeLine(`  headers: {`)
+                writer.writeLine(`      'Content-Type': 'application/json'`)
+                writer.writeLine(`  }`)
+                writer.writeLine(`}`)
+            }
             writer.blankLine()
             writer.writeLine(`export type ${endpoint.safeName} = {`)
             handlers.forEach(([, handler]) => writeHandlerType(writer, handler))
@@ -81,22 +91,23 @@ export async function generateFetch(root: { endpoint: Endpoint, errors: Error[] 
                         name: safeName
                     })
                 } else {
-                    writer.writeLine(`  ${safeName}: (defaultInit?: RequestInit) => ${safeName}Type;`)
+                    writer.writeLine(`  ${safeName}: ${safeName}Type;`)
                 }
             })
             writer.writeLine(`}`)
             writer.blankLine()
-            writer.writeLine(`export default (path: string, parentInit: RequestInit = {}) => (defaultInit: RequestInit = {}): ${endpoint.safeName} => ({`)
-            handlers.forEach(([, handler]) => writeHandler(writer, handler))
+            writer.writeLine(`export default (path: string, defaultInitProvider?: () => RequestInit | Promise<RequestInit>): ${endpoint.safeName} => ({`)
+            handlers.forEach(([, handler]) => writeHandler(writer, handler, '', endpoint.isRoot))
             endpoint.children.forEach(({ name, safeName, handlers, canSimplify }) => {
                 if (canSimplify) {
                     const [handler] = Object.values(handlers)
                     writeHandler(writer, {
                         ...handler,
                         name: safeName
-                    }, name)
+                    }, name, endpoint.isRoot)
                 } else {
-                    writer.writeLine(`  ${safeName}: ${safeName}(path + '/${name}', mergeInits(parentInit, defaultInit)),`)
+                    const initProvidersArg = endpoint.isRoot ? 'mergeInitProviders(() => rootInit, defaultInitProvider)' : 'defaultInitProvider'
+                    writer.writeLine(`  ${safeName}: ${safeName}(path + '/${name}', ${initProvidersArg}),`)
                 }
             })
             writer.writeLine(`})`)

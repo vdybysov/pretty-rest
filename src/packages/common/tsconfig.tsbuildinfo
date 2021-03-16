@@ -227,8 +227,8 @@
         "affectsGlobalScope": false
       },
       "./src/utils.ts": {
-        "version": "a90006d841776bae09b84deab29d3273a6e27f95639cf9b20cb58b8ca5b70cc5",
-        "signature": "04bea47974e6b6b180726cd1567b2c14ab3581023e916616c8c628d579df9546",
+        "version": "8ed047c80c24527e14ab130a216aeec2f3db2c08d9d2b3d9b1bef0f69e98646f",
+        "signature": "918eb7d4cd0dddd85aa27077bba821dbcce1054e1d6226c4c4bb762b34b622fb",
         "affectsGlobalScope": false
       },
       "./src/context/httpcontext.ts": {
@@ -247,8 +247,8 @@
         "affectsGlobalScope": false
       },
       "./src/endpoint/index.ts": {
-        "version": "8b4161ab519f6bea7f509546cfa33fcccf6e7217b1eb0d3fee9baca686964ecd",
-        "signature": "840f65a62f494cb18cf675462c650da8267dac416638b392ea7a8ad757f05c62",
+        "version": "690ade159594d3c48a672e0cc8b6236cf96ced2036eebbab44ebd1692ff3e8df",
+        "signature": "adce75ad67f1a4567a44d99f127375c026c73161ecf5a306236ea5b90f01603c",
         "affectsGlobalScope": false
       },
       "./src/error/index.ts": {

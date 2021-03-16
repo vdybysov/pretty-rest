@@ -63,12 +63,15 @@ export async function resolve(path = '', name = ''): Promise<{
         return handlers
     }
 
+    const pathParamName = utils.getPathParamName(name)
     const endpoint: Endpoint = {
         name,
-        safeName: name ? toCamelCase(name) : 'root',
+        safeName: utils.getSafeName(pathParamName || name || 'root'),
+        isPathParam: !!pathParamName,
         handlers: {},
         children: [],
-        canSimplify: false
+        canSimplify: false,
+        isRoot: !name
     }
     const dirPath = Path.join('endpoints', path, name)
     for (const file of await fs.readdir(dirPath)) {
@@ -78,14 +81,17 @@ export async function resolve(path = '', name = ''): Promise<{
         } else if (file === 'index.ts') {
             endpoint.handlers = resolveHandlers(filePath)
         } else {
-            const { name } = Path.parse(file)
+            let { name } = Path.parse(file)
             const handlers = resolveHandlers(filePath)
+            const pathParamName = utils.getPathParamName(name)
             endpoint.children.push({
                 name,
-                safeName: toCamelCase(name),
+                safeName: utils.getSafeName(pathParamName || name),
+                isPathParam: !!pathParamName,
                 handlers,
                 children: [],
-                canSimplify: Object.keys(handlers).length === 1
+                canSimplify: Object.keys(handlers).length === 1,
+                isRoot: false
             })
         }
     }

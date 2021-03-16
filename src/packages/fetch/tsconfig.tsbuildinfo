@@ -211,19 +211,14 @@
         "signature": "1e61418f41d404e744b6536af9f8c6f6674dd4d54c12335cd0c4f7eded69cf3f",
         "affectsGlobalScope": true
       },
-      "./node_modules/@ts-morph/common/lib/typescript.d.ts": {
+      "../common/node_modules/@ts-morph/common/lib/typescript.d.ts": {
         "version": "b4e3edb529b83431180aba7ea2d39302afe8919962344db98d71fe0253951b62",
         "signature": "b4e3edb529b83431180aba7ea2d39302afe8919962344db98d71fe0253951b62",
         "affectsGlobalScope": false
       },
-      "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts": {
+      "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts": {
         "version": "e6fc895e92e3bd1525fcf3fc7c364e14ea11ec375dded7fca9125dbea30a9adf",
         "signature": "e6fc895e92e3bd1525fcf3fc7c364e14ea11ec375dded7fca9125dbea30a9adf",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/ts-morph/lib/ts-morph.d.ts": {
-        "version": "8d1e2994e64e3834f3afd9617052eb5dd8ac3c4dcd27b48b9089514b92e43819",
-        "signature": "8d1e2994e64e3834f3afd9617052eb5dd8ac3c4dcd27b48b9089514b92e43819",
         "affectsGlobalScope": false
       },
       "../common/node_modules/ts-morph/lib/ts-morph.d.ts": {
@@ -232,8 +227,8 @@
         "affectsGlobalScope": false
       },
       "../common/dist/utils.d.ts": {
-        "version": "04bea47974e6b6b180726cd1567b2c14ab3581023e916616c8c628d579df9546",
-        "signature": "04bea47974e6b6b180726cd1567b2c14ab3581023e916616c8c628d579df9546",
+        "version": "918eb7d4cd0dddd85aa27077bba821dbcce1054e1d6226c4c4bb762b34b622fb",
+        "signature": "918eb7d4cd0dddd85aa27077bba821dbcce1054e1d6226c4c4bb762b34b622fb",
         "affectsGlobalScope": false
       },
       "../common/dist/context/httpcontext.d.ts": {
@@ -252,8 +247,8 @@
         "affectsGlobalScope": false
       },
       "../common/dist/endpoint/index.d.ts": {
-        "version": "840f65a62f494cb18cf675462c650da8267dac416638b392ea7a8ad757f05c62",
-        "signature": "840f65a62f494cb18cf675462c650da8267dac416638b392ea7a8ad757f05c62",
+        "version": "adce75ad67f1a4567a44d99f127375c026c73161ecf5a306236ea5b90f01603c",
+        "signature": "adce75ad67f1a4567a44d99f127375c026c73161ecf5a306236ea5b90f01603c",
         "affectsGlobalScope": false
       },
       "../common/dist/error/index.d.ts": {
@@ -266,8 +261,13 @@
         "signature": "1e6ce03a29aa9666c49d8fbb48f5e79596d0f7735f243b6349d3890afc959c34",
         "affectsGlobalScope": false
       },
+      "./node_modules/ts-morph/lib/ts-morph.d.ts": {
+        "version": "8d1e2994e64e3834f3afd9617052eb5dd8ac3c4dcd27b48b9089514b92e43819",
+        "signature": "8d1e2994e64e3834f3afd9617052eb5dd8ac3c4dcd27b48b9089514b92e43819",
+        "affectsGlobalScope": false
+      },
       "./src/index.ts": {
-        "version": "cfa0b964715458bcddc867906999f74d8938d7d8c1d5d8392871df600fa777da",
+        "version": "7b4f90146c7bb48d56e1d144dca3b4f15b79235f46f2dafea27fc88aa4d6616a",
         "signature": "1b353d697085384091af925d526b22fb10da24d8d441640d8e9c209f0f0a18e7",
         "affectsGlobalScope": false
       },
@@ -767,14 +767,14 @@
       ],
       "../common/dist/endpoint/handler.d.ts": [
         "../common/dist/endpoint/method.d.ts",
-        "./node_modules/ts-morph/lib/ts-morph.d.ts"
+        "../common/node_modules/ts-morph/lib/ts-morph.d.ts"
       ],
       "../common/dist/endpoint/index.d.ts": [
         "../common/dist/endpoint/handler.d.ts",
         "../common/dist/endpoint/method.d.ts"
       ],
       "../common/dist/error/index.d.ts": [
-        "./node_modules/ts-morph/lib/ts-morph.d.ts"
+        "../common/node_modules/ts-morph/lib/ts-morph.d.ts"
       ],
       "../common/dist/index.d.ts": [
         "../common/dist/context/httpcontext.d.ts",
@@ -785,22 +785,22 @@
         "../common/dist/utils.d.ts"
       ],
       "../common/dist/utils.d.ts": [
-        "./node_modules/ts-morph/lib/ts-morph.d.ts"
+        "../common/node_modules/ts-morph/lib/ts-morph.d.ts"
+      ],
+      "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts": [
+        "../common/node_modules/@ts-morph/common/lib/typescript.d.ts"
       ],
       "../common/node_modules/ts-morph/lib/ts-morph.d.ts": [
-        "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts"
-      ],
-      "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts": [
-        "./node_modules/@ts-morph/common/lib/typescript.d.ts"
+        "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts"
       ],
       "./node_modules/ts-morph/lib/ts-morph.d.ts": [
-        "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts"
+        "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts"
       ],
       "./src/index.ts": [
         "../../../node_modules/@types/node/fs.d.ts",
         "../../../node_modules/@types/node/path.d.ts",
         "../common/dist/index.d.ts",
-        "./node_modules/ts-morph/lib/ts-morph.d.ts"
+        "../common/node_modules/ts-morph/lib/ts-morph.d.ts"
       ]
     },
     "exportedModulesMap": {
@@ -1055,13 +1055,13 @@
         "../common/dist/utils.d.ts"
       ],
       "../common/dist/utils.d.ts": [
-        "./node_modules/ts-morph/lib/ts-morph.d.ts"
+        "../common/node_modules/ts-morph/lib/ts-morph.d.ts"
+      ],
+      "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts": [
+        "../common/node_modules/@ts-morph/common/lib/typescript.d.ts"
       ],
       "../common/node_modules/ts-morph/lib/ts-morph.d.ts": [
         "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts"
-      ],
-      "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts": [
-        "./node_modules/@ts-morph/common/lib/typescript.d.ts"
       ],
       "./node_modules/ts-morph/lib/ts-morph.d.ts": [
         "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts"
@@ -1126,9 +1126,9 @@
       "../common/dist/error/index.d.ts",
       "../common/dist/index.d.ts",
       "../common/dist/utils.d.ts",
+      "../common/node_modules/@ts-morph/common/lib/ts-morph-common.d.ts",
+      "../common/node_modules/@ts-morph/common/lib/typescript.d.ts",
       "../common/node_modules/ts-morph/lib/ts-morph.d.ts",
-      "./node_modules/@ts-morph/common/lib/ts-morph-common.d.ts",
-      "./node_modules/@ts-morph/common/lib/typescript.d.ts",
       "./node_modules/@types/minimatch/index.d.ts",
       "./node_modules/ts-morph/lib/ts-morph.d.ts",
       "./node_modules/typescript/lib/lib.es2015.collection.d.ts",

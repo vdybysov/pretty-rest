@@ -227,8 +227,8 @@
         "affectsGlobalScope": false
       },
       "../common/dist/utils.d.ts": {
-        "version": "04bea47974e6b6b180726cd1567b2c14ab3581023e916616c8c628d579df9546",
-        "signature": "04bea47974e6b6b180726cd1567b2c14ab3581023e916616c8c628d579df9546",
+        "version": "918eb7d4cd0dddd85aa27077bba821dbcce1054e1d6226c4c4bb762b34b622fb",
+        "signature": "918eb7d4cd0dddd85aa27077bba821dbcce1054e1d6226c4c4bb762b34b622fb",
         "affectsGlobalScope": false
       },
       "../common/dist/context/httpcontext.d.ts": {
@@ -247,8 +247,8 @@
         "affectsGlobalScope": false
       },
       "../common/dist/endpoint/index.d.ts": {
-        "version": "840f65a62f494cb18cf675462c650da8267dac416638b392ea7a8ad757f05c62",
-        "signature": "840f65a62f494cb18cf675462c650da8267dac416638b392ea7a8ad757f05c62",
+        "version": "adce75ad67f1a4567a44d99f127375c026c73161ecf5a306236ea5b90f01603c",
+        "signature": "adce75ad67f1a4567a44d99f127375c026c73161ecf5a306236ea5b90f01603c",
         "affectsGlobalScope": false
       },
       "../common/dist/error/index.d.ts": {
@@ -272,7 +272,7 @@
         "affectsGlobalScope": false
       },
       "./src/index.ts": {
-        "version": "093e740cf418b3d2ba87d35241b9f93948161faa476bc19e7bb78617910f0cbc",
+        "version": "e486f1d41fd1f45cc40f3391e1389897ca3cadfdf0ba481011be447fbad4bafd",
         "signature": "5fcecdaf2b37569df2e9b58d5980c4b116470dc8fe66036648b63bc05f61b277",
         "affectsGlobalScope": false
       },

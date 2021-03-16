@@ -7,7 +7,7 @@ const resolveHandlerTypesByFunction = (fn: FunctionDeclaration | ArrowFunction):
             outputType = outputType.getTypeArguments()[0]
         }
         return [
-            fn.getParameters()[1].getType(),
+            fn.getParameters()[1]?.getType(),
             outputType,
             fn.getParameters()[0].getType()
         ]
@@ -41,3 +41,16 @@ export const resolveHandlerTypes = (exportSymbol: Symbol): [Type, Type, Type] | 
 }
 
 export const getTypeName = (type: Type) => type.getSymbol()?.getDeclarations()[0].getChildrenOfKind(ts.SyntaxKind.Identifier)[0].getText()
+
+export const getPathParamName = (name = '') => {
+    const pathParam = name.match(/^\[\w+\]$/)?.[0] ?? ''
+    return pathParam.slice(1, pathParam.length - 1)
+}
+
+export const getSafeName = (name = '') => name.split('-')
+    .map(part => part.split('_'))
+    .reduce((list, curr) => [...list, ...curr])
+    .filter(part => !!part)
+    .map((part, idx) => `${idx === 0 ? part[0].toLowerCase() : part[0].toUpperCase()}${part.slice(1)}`)
+    .join('')
+    .replace(/[\[\]]/g, '')

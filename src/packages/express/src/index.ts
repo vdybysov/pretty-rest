@@ -49,20 +49,20 @@ export async function generateExpress(root: { endpoint: Endpoint, errors: Error[
         recursive: true
     })
 
-    function generateEndpoint(endpoint: Endpoint, parentPath = '') {
-        const path = Path.join(parentPath, endpoint.name)
-        const handlers = Object.entries(endpoint.handlers)
-        const filePath = endpoint.children.length ? Path.join(rootDir, 'routes', path, 'index.ts')
+    function generateEndpoint({ name, handlers, children }: Endpoint, parentPath = '') {
+        const path = Path.join(parentPath, name)
+        const handlerList = Object.entries(handlers)
+        const filePath = children.length ? Path.join(rootDir, 'routes', path, 'index.ts')
             : Path.join(rootDir, 'routes', `${path}.ts`)
-        const needOneMoreLevelUp = endpoint.children.length && parentPath
+        const needOneMoreLevelUp = children.length && parentPath
         const srcFile = prj.createSourceFile(filePath)
         const contextResolvers: string[] = []
         srcFile.addStatements(writer => {
-            endpoint.children.forEach((ep) => {
-                generateEndpoint(ep, path)
-                writer.writeLine(`import ${ep.safeName} from "./${ep.name}"`)
+            children.forEach((child) => {
+                generateEndpoint(child, path)
+                writer.writeLine(`import ${child.safeName} from "./${child.name}"`)
             })
-            if (handlers.length) {
+            if (handlerList.length) {
                 const generatedPath = [
                     needOneMoreLevelUp ? '..' : '',
                     path.split(Path.sep).map(() => '..').join('/'),
@@ -73,7 +73,7 @@ export async function generateExpress(root: { endpoint: Endpoint, errors: Error[
                     'endpoints',
                     parentPath ? path.split(Path.sep).join('/') : ''
                 ].filter(part => !!part).join('/')
-                const contextTypes = handlers.map(([, { contextType }]) => contextType)
+                const contextTypes = handlerList.map(([, { contextType }]) => contextType)
                     .reduce((list: Type[], type) => list.includes(type) ? list : [...list, type], [])
                     .map(utils.getTypeName)
                     .filter(type => type !== 'HttpContext')
@@ -91,9 +91,9 @@ export async function generateExpress(root: { endpoint: Endpoint, errors: Error[
                     writer.writeLine(`import { provide as provide${name} } from "${rootPath}/context/${name}"`)
                 })
                 writer.writeLine(`import handlers from "${importPath}"`)
-                const typesToImport = handlers
+                const typesToImport = handlerList
                     .map(([, { inputType, outputType, contextType }]) => [inputType, outputType, contextType])
-                    .reduce((list, curr) => [...list, ...curr.filter(type => type.getAliasSymbol() && !list.includes(type))], [])
+                    .reduce((list, curr) => [...list, ...curr.filter(type => type?.getAliasSymbol() && !list.includes(type))], [])
                     .reduce((map, curr) => {
                         const path = curr.getAliasSymbol().getDeclarations()[0].getSourceFile().getBaseName()
                         return {
@@ -115,13 +115,15 @@ export async function generateExpress(root: { endpoint: Endpoint, errors: Error[
             writer.blankLineIfLastNot()
             writer.writeLine('export default (routerProvider) => {')
             writer.writeLine('  const _router = routerProvider()')
-            handlers.forEach(([method, { inputType, contextType }]) => {
+            handlerList.forEach(([method, { inputType, contextType }]) => {
                 writer.blankLine()
                 writer.writeLine(`  _router.${method.toLowerCase()} ('/', async (req, res) => { `)
                 writer.writeLine(`      try {`)
                 writer.writeLine(`          const result = await handlers.${Method[method]}(`)
                 writer.writeLine(`              await resolve${utils.getTypeName(contextType)}(req, res),`)
-                writer.writeLine(`              { ...req.query ${method === 'Post' ? ', ...req.body' : ''} } as ${inputType.getText()}`)
+                if (inputType) {
+                    writer.writeLine(`              { ...req.params, ...req.query ${method === 'Post' ? ', ...req.body' : ''} } as ${inputType.getText()}`)
+                }
                 writer.writeLine(`          )`)
                 writer.writeLine(`          res.json(result)`)
                 writer.writeLine(`      } catch(error) {`)
@@ -129,8 +131,8 @@ export async function generateExpress(root: { endpoint: Endpoint, errors: Error[
                 writer.writeLine(`      }`)
                 writer.writeLine(`  })`)
             })
-            endpoint.children.forEach((ep) => {
-                writer.writeLine(`  _router.use('/${ep.name}', ${ep.safeName}(routerProvider))`)
+            children.forEach(({ name, safeName, isPathParam }) => {
+                writer.writeLine(`  _router.use('/${isPathParam ? ':' : ''}${safeName}', ${safeName}(routerProvider))`)
             })
             writer.writeLine(`  return _router`)
             writer.writeLine(`} `)
