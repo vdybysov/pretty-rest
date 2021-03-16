@@ -14,37 +14,3 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-  build-common:
-    name: Build and link common package
-    runs-on: self-hosted
-    needs: [init]
-    steps:
-      - run: npm install && npm run build && npm link
-        working-directory: ./src/packages/common
-  build-resolver:
-    name: Build resolver package
-    runs-on: self-hosted
-    needs: [init]
-    steps:
-      - run: npm install && npm run build
-        working-directory: ./src/packages/resolver
-  build-express:
-    name: Build and link express package
-    runs-on: self-hosted
-    needs: [init]
-    steps:
-      - run: npm install && npm run build && npm link
-        working-directory: ./src/packages/express
-  build-fetch:
-    name: Build and link fetch package
-    runs-on: self-hosted
-    needs: [init]
-    steps:
-      - run: npm install && npm run build && npm link
-        working-directory: ./src/packages/fetch
-  build:
-    name: Link root package
-    runs-on: self-hosted
-    needs: [init]
-    steps:
-      - run: npm install && npm link
