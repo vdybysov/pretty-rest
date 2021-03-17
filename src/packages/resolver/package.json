@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@pretty-rest/common": "file:../common",
-    "camelcase": "^6.2.0",
-    "ts-morph": "^10.0.1"
+    "camelcase": "^6.2.0"
   }
 }

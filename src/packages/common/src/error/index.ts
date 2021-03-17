@@ -1,4 +1,4 @@
-import { Type } from "ts-morph";
+import { Type } from "typescript";
 
 export default interface Error {
     name: string

@@ -1,46 +1,49 @@
-import { ArrowFunction, FunctionDeclaration, Identifier, Symbol, ts, Type, VariableDeclaration } from "ts-morph"
+import * as ts from "typescript"
+import { promises as fs } from "fs"
+import * as Path from "path"
 
-const resolveHandlerTypesByFunction = (fn: FunctionDeclaration | ArrowFunction): [Type, Type, Type] | undefined => {
+const resolveHandlerTypesByFunction = (fn: ts.FunctionDeclaration | ts.ArrowFunction): {
+    inputType: ts.TypeNode,
+    outputType: ts.TypeNode,
+    contextType: ts.TypeNode,
+} | undefined => {
     if (fn) {
-        let outputType = fn.getReturnType()
-        if (fn.isAsync()) {
-            outputType = outputType.getTypeArguments()[0]
-        }
-        return [
-            fn.getParameters()[1]?.getType(),
-            outputType,
-            fn.getParameters()[0].getType()
-        ]
-    }
-}
-
-export const resolveHandlerTypesByIdentifier = (identifier: Identifier): [Type, Type, Type] | undefined => {
-    let declaration = identifier.getDefinitions()[0].getDeclarationNode()
-    if (declaration.getKind() === ts.SyntaxKind.VariableDeclaration) {
-        declaration = (declaration as VariableDeclaration).getInitializer()
-    }
-    return resolveHandlerTypesByFunction(declaration as FunctionDeclaration | ArrowFunction)
-}
-
-export const resolveHandlerTypes = (exportSymbol: Symbol): [Type, Type, Type] | undefined => {
-    let fn: FunctionDeclaration | ArrowFunction
-    const valDecl = exportSymbol.getValueDeclaration()
-    if (valDecl) {
-        if (valDecl.getKind() === ts.SyntaxKind.FunctionDeclaration || valDecl.getKind() === ts.SyntaxKind.ArrowFunction) {
-            fn = valDecl as FunctionDeclaration | ArrowFunction
-        } else {
-            fn = valDecl.getChildrenOfKind(ts.SyntaxKind.FunctionDeclaration)[0] ?? valDecl.getChildrenOfKind(ts.SyntaxKind.ArrowFunction)[0]
-        }
-        return resolveHandlerTypesByFunction(fn)
-    } else {
-        const [identifier] = exportSymbol.getDeclarations()[0].getChildrenOfKind(ts.SyntaxKind.Identifier)
-        if (identifier) {
-            return resolveHandlerTypesByIdentifier(identifier)
+        return {
+            contextType: fn.parameters[0].type,
+            inputType: fn.parameters[1]?.type,
+            outputType: (fn.type as ts.TypeReferenceNode).typeArguments?.[0] ?? fn.type,
         }
     }
 }
 
-export const getTypeName = (type: Type) => type.getSymbol()?.getDeclarations()[0].getChildrenOfKind(ts.SyntaxKind.Identifier)[0].getText()
+export const resolveHandlerTypesByIdentifierName = (file: ts.SourceFile, name: string): {
+    inputType: ts.TypeNode,
+    outputType: ts.TypeNode,
+    contextType: ts.TypeNode,
+} | undefined => {
+    let fn: ts.FunctionDeclaration | ts.ArrowFunction
+    file.forEachChild(child => {
+        if (child.kind === ts.SyntaxKind.VariableStatement) {
+            const declaration = (child as ts.VariableStatement).declarationList.declarations[0]
+            if ((declaration.name as ts.Identifier).text === name) {
+                fn = declaration.initializer as ts.ArrowFunction
+            }
+        } else if (child.kind === ts.SyntaxKind.FunctionDeclaration) {
+            const declaration = child as ts.FunctionDeclaration
+            if ((declaration.name as ts.Identifier).text === name) {
+                fn = (child as ts.FunctionDeclaration)
+            }
+        }
+    })
+    return resolveHandlerTypesByFunction(fn)
+}
+
+export const getTypeName = (type: ts.Type) => {
+    if (!type) {
+        console.trace()
+    }
+    return (type.symbol.declarations[0] as any).name.text
+}
 
 export const getPathParamName = (name = '') => {
     const pathParam = name.match(/^\[\w+\]$/)?.[0] ?? ''
@@ -54,3 +57,20 @@ export const getSafeName = (name = '') => name.split('-')
     .map((part, idx) => `${idx === 0 ? part[0].toLowerCase() : part[0].toUpperCase()}${part.slice(1)}`)
     .join('')
     .replace(/[\[\]]/g, '')
+
+export const writeFile = async (path: string, lines: string[]) => {
+    await fs.mkdir(Path.parse(path).dir, {
+        recursive: true
+    })
+    await fs.writeFile(path, ts.createPrinter().printFile(ts.createSourceFile(
+        path,
+        lines.join('\n'),
+        ts.ScriptTarget.ESNext
+    )))
+}
+
+export const typeToString = (program: ts.Program, type: ts.Type) => program.getTypeChecker().typeToString(
+    type,
+    undefined,
+    ts.TypeFormatFlags.UseFullyQualifiedType
+)

@@ -9,4 +9,5 @@ export default interface Endpoint {
     children: Endpoint[]
     canSimplify: boolean
     isRoot: boolean
+    filePath: string
 }

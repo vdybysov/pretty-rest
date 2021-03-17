@@ -1,4 +1,4 @@
-import { Type } from "ts-morph";
+import { Type } from "typescript";
 import Method from "./Method";
 
 export default interface Handler {

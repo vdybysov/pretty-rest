@@ -4,5 +4,6 @@ import Endpoint from "./endpoint";
 import Handler from "./endpoint/Handler";
 import Method from "./endpoint/Method";
 import Error from "./error";
+import Context from "./context";
 
-export { HttpContext, utils, Endpoint, Handler, Method, Error }
+export { HttpContext, utils, Endpoint, Handler, Method, Error, Context }
