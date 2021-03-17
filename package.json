@@ -1,6 +1,6 @@
 {
   "name": "pretty-rest",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "",
   "scripts": {
     "watch:all": "concurrently \"npm run watch:common\" \"npm run watch:resolver\" \"npm run watch:fetch\" \"npm run watch:express\"",
@@ -12,7 +12,7 @@
   "bin": {
     "pretty-rest": "bin/index.js"
   },
-  "author": "Sandfield",
+  "author": "vdybysov",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^14.14.32",

@@ -1,13 +1,13 @@
 {
   "name": "@pretty-rest/fetch",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w"
   },
-  "author": "",
+  "author": "vdybysov",
   "license": "ISC",
   "devDependencies": {
     "typescript": "^4.2.3"
